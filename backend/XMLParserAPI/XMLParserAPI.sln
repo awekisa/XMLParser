@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XMLParserAPI", "XMLParserAPI.csproj", "{3A3FC2F9-8AB9-41D6-A3B6-DBB5E64821B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XMLParserAPITests", "..\XMLParserAPITests\XMLParserAPITests.csproj", "{74E0B760-E3E9-477D-8364-601447D87A0E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A3FC2F9-8AB9-41D6-A3B6-DBB5E64821B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A3FC2F9-8AB9-41D6-A3B6-DBB5E64821B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A3FC2F9-8AB9-41D6-A3B6-DBB5E64821B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A3FC2F9-8AB9-41D6-A3B6-DBB5E64821B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74E0B760-E3E9-477D-8364-601447D87A0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74E0B760-E3E9-477D-8364-601447D87A0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74E0B760-E3E9-477D-8364-601447D87A0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74E0B760-E3E9-477D-8364-601447D87A0E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B91A394C-D548-472F-B6B1-F38DD2A50218}
+	EndGlobalSection
+EndGlobal
