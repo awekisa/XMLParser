@@ -8,17 +8,17 @@ import {
 	AlertIcon,
 	Box,
 	Spacer,
-	Text,
 	VStack,
 } from '@chakra-ui/react';
 import Form from './Components/Form';
 
 function App() {
 	const [responseMessage, setResponseMessage] = useState({});
+	const [error, setError] = useState('');
 
-	useEffect(() => {
-		console.log(responseMessage);
-	}, [responseMessage]);
+	// useEffect(() => {
+	// 	console.log(responseMessage);
+	// }, [responseMessage, error]);
 
 	return (
 		<ChakraProvider>
@@ -27,7 +27,10 @@ function App() {
 				<VStack mt='30px'>
 					<Box>
 						<Heading size='md'>Please select valid XML file:</Heading>
-						<Form setResponseMessage={setResponseMessage} />
+						<Form
+							setResponseMessage={setResponseMessage}
+							setError={setError}
+						/>
 					</Box>
 					<Spacer />
 					<Box>
@@ -51,6 +54,15 @@ function App() {
 							)
 						)}
 					</Box>
+					{error && (
+						<Alert
+							borderRadius='10px'
+							status='error'
+						>
+							<AlertIcon />
+							{error}
+						</Alert>
+					)}
 				</VStack>
 			</Container>
 		</ChakraProvider>

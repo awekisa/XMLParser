@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Moq;
 using System.Net;
 using XMLParserAPI.Controllers;
@@ -23,16 +22,8 @@ namespace XMLParserAPITests
         public async Task WhenUploadValidXmlThenJsonIsSaved()
         {
             // Arrange
-            var inMemorySettings = new Dictionary<string, string> {
-                {"SavedJsonFilesFolder", $"{BASE_PATH}\\OutputFiles"}
-            };
-
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
-
             _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestValidXMLFiles\\sample.xml")));
-            _sut = new DocumentController(configuration);
+            _sut = new DocumentController();
 
             // Act
             var response = await _sut.UploadAsync(new UploadRequestModel { File = _mockFile.Object, FileName = "result" });
@@ -49,20 +40,10 @@ namespace XMLParserAPITests
         public async Task WhenUploadMultipleValidXmlFilesThenJsonFilesAreSaved()
         {
             // Arrange
-            var inMemorySettings = new Dictionary<string, string> {
-                {"SavedJsonFilesFolder", $"{BASE_PATH}\\OutputFiles"}
-            };
-
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
-
-            _sut = new DocumentController(configuration);
+            _sut = new DocumentController();
 
             // Act
-            var files = Directory.EnumerateFiles($"{BASE_PATH}\\TestValidXMLFiles\\", "*.xml")
-                //.Where(f => !f.Contains("empty.xml") && !f.Contains("invalidXML.xml")) // skipping the invalid empty xml file from the test files
-                .ToArray();
+            var files = Directory.EnumerateFiles($"{BASE_PATH}\\TestValidXMLFiles\\", "*.xml").ToArray();
             var tasks = files
                 .AsParallel()
                 .Select((f) =>
@@ -89,9 +70,66 @@ namespace XMLParserAPITests
             }
 
             // cleanup
-            Thread.Sleep(2000); // so we can manually check that the output files are created 
+            Thread.Sleep(2000); // so we have time to manually check that the output files are created, before cleanup 
             var outputFiles = Directory.EnumerateFiles($"{BASE_PATH}\\OutputFiles\\", "*.json").ToArray();
             foreach(var outputFile in outputFiles)
+            {
+                File.Delete(outputFile);
+            }
+        }
+
+        [Test]
+        public async Task WhenUploadMultipleFilesThenOnlyValidXmlsAreSaved()
+        {
+            // Arrange
+            _sut = new DocumentController();
+
+            // Act
+            var files = Directory.EnumerateFiles($"{BASE_PATH}\\TestValidXMLFiles\\", "*.xml")
+                .Concat(Directory.EnumerateFiles($"{BASE_PATH}\\TestInvalidXMLFiles\\", "*.*"))
+                .ToArray();
+
+            var tasks = files
+                .AsParallel()
+                .Select((f) =>
+                {
+                    var mockFile = new Mock<IFormFile>();
+                    mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes(f)));
+                    var fileName = ExtractFileNameFromLocation(f, $"{BASE_PATH}\\TestValidXMLFiles\\", ".xml");
+                    return _sut.UploadAsync(new UploadRequestModel { File = mockFile.Object, FileName = fileName });
+                })
+                .ToList();
+
+            await Task.WhenAll(tasks);
+
+            // Assert
+            Assert.That(tasks.Count(), Is.EqualTo(files.Length));
+
+            var successfullTasks = 0;
+            var unsuccessfullTasks = 0;
+
+            foreach (var task in tasks)
+            {
+                Assert.That(task.Result, Is.TypeOf<UploadResponseModel>());
+
+                if (task.Result.StatusCode == HttpStatusCode.OK)
+                {
+                    var fileLocation = task?.Result?.Message?.Replace("File saved at ", "");
+                    Assert.IsTrue(File.Exists(fileLocation));
+                    successfullTasks++;
+                }
+                else if (task.Result.StatusCode == HttpStatusCode.InternalServerError) {
+                    unsuccessfullTasks++;
+                }
+            }
+
+            Assert.That(successfullTasks, Is.EqualTo(5)); // number of files in TestValidXMLFiles folder
+            Assert.That(unsuccessfullTasks, Is.EqualTo(4)); // number of files in TestInvalidXMLFiles folder
+
+            // cleanup
+            Thread.Sleep(2000); // so we have time to manually check that the output files are created, before cleanup 
+            var outputFiles = Directory.EnumerateFiles($"{BASE_PATH}\\OutputFiles\\", "*.json").ToArray();
+            foreach (var outputFile in outputFiles)
             {
                 File.Delete(outputFile);
             }
@@ -101,11 +139,8 @@ namespace XMLParserAPITests
         public async Task WhenUploadTxtFileThenErrorResponse()
         {
             // Arrange
-            IConfiguration configuration = new ConfigurationBuilder()
-                .Build();
-
             _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestInvalidXMLFiles\\textFile.txt")));
-            _sut = new DocumentController(configuration);
+            _sut = new DocumentController();
 
             // Act
             var response = await _sut.UploadAsync(new UploadRequestModel { File = _mockFile.Object, FileName = "result" });
@@ -121,11 +156,8 @@ namespace XMLParserAPITests
         public async Task WhenUploadJsonFileThenErrorResponse()
         {
             // Arrange
-            IConfiguration configuration = new ConfigurationBuilder()
-                .Build();
-
             _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestInvalidXMLFiles\\jsonFile.json")));
-            _sut = new DocumentController(configuration);
+            _sut = new DocumentController();
 
             // Act
             var response = await _sut.UploadAsync(new UploadRequestModel { File = _mockFile.Object, FileName = "result" });
@@ -141,11 +173,8 @@ namespace XMLParserAPITests
         public async Task WhenUploadInvalidXMLFileThenErrorResponse()
         {
             // Arrange
-            IConfiguration configuration = new ConfigurationBuilder()
-                .Build();
-
             _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestInvalidXMLFiles\\invalidXML.xml")));
-            _sut = new DocumentController(configuration);
+            _sut = new DocumentController();
 
             // Act
             var response = await _sut.UploadAsync(new UploadRequestModel { File = _mockFile.Object, FileName = "result" });
@@ -161,11 +190,8 @@ namespace XMLParserAPITests
         public async Task WhenUploadEmptyXmlFileThenErrorResponse()
         {
             // Arrange
-            IConfiguration configuration = new ConfigurationBuilder()
-                .Build();
-
             _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestInvalidXMLFiles\\empty.xml")));
-            _sut = new DocumentController(configuration);
+            _sut = new DocumentController();
 
             // Act
             var response = await _sut.UploadAsync(new UploadRequestModel { File = _mockFile.Object, FileName = "result" });
@@ -182,6 +208,11 @@ namespace XMLParserAPITests
             int indexBeginngingWord1 = text.IndexOf(findText1);//Find the beginning index of the word1
             int indexEndOfWord1 = indexBeginngingWord1 + findText1.Length;//Add the length of the word1 to starting index to find the end of the word1
             int indexBeginningWord2 = text.LastIndexOf(findText2);//Find the beginning index of word2
+
+            if (indexBeginngingWord1 < 0 || indexEndOfWord1 < 0)
+            {
+                return string.Empty;
+            }
             int length = indexBeginningWord2 - indexEndOfWord1;//Length of the substring by subtracting index beginning of word2 from the end of word1
             string substring = text.Substring(indexEndOfWord1, length);//Get the substring
             return substring;

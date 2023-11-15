@@ -1,32 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Input, Flex } from '@chakra-ui/react';
+import { Box, Button, Input, Flex, FormControl } from '@chakra-ui/react';
 
-function Form({ setResponseMessage }) {
+function Form({ setResponseMessage, setError }) {
 	const { register, handleSubmit } = useForm();
+	const [file, setFile] = useState();
 
+	const handleFileChange = (evt) => {
+		setFile(evt.target.files[0]);
+	};
 	const onSubmit = async (data) => {
-		const formData = new FormData();
-		formData.append('file', data.file[0]);
-		formData.append('fileName', removeFileExtension(data.file[0]?.name));
+		try {
+			const formData = new FormData();
+			formData.append('file', data.file[0]);
+			formData.append('fileName', removeFileExtension(data.file[0]?.name));
 
-		const res = await fetch('https://localhost:7217/document', {
-			method: 'POST',
-			body: formData,
-		})
-			.then((res) => res.json())
-			.then((data) => setResponseMessage(data));
+			await fetch('https://localhost:7217/document', {
+				method: 'POST',
+				body: formData,
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					setResponseMessage(data);
+					setError('');
+				});
+		} catch (err) {
+			setError(err.message);
+		}
 	};
 
 	return (
-		<div className='App'>
+		<Box>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Flex>
-					<Input
-						type='file'
-						{...register('file')}
-					/>
+					<FormControl onChange={handleFileChange}>
+						<Input
+							type='file'
+							{...register('file')}
+						/>
+					</FormControl>
 					<Button
+						isDisabled={!file}
 						colorScheme='teal'
 						type='submit'
 					>
@@ -34,7 +48,7 @@ function Form({ setResponseMessage }) {
 					</Button>
 				</Flex>
 			</form>
-		</div>
+		</Box>
 	);
 }
 

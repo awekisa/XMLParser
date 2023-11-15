@@ -9,13 +9,7 @@ namespace XMLParserAPI.Controllers
     [Route("[controller]")]
     public class DocumentController : Controller
     {
-        private readonly IConfiguration _configuration;
         private string BASE_PATH = Directory.GetCurrentDirectory();
-
-        public DocumentController(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
 
         [HttpPost]
         public async Task<UploadResponseModel> UploadAsync([FromForm] UploadRequestModel request)
