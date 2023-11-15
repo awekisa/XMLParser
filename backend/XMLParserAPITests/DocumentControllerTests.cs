@@ -31,7 +31,7 @@ namespace XMLParserAPITests
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
 
-            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestXMLFiles\\sample.xml")));
+            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestValidXMLFiles\\sample.xml")));
             _sut = new DocumentController(configuration);
 
             // Act
@@ -60,8 +60,8 @@ namespace XMLParserAPITests
             _sut = new DocumentController(configuration);
 
             // Act
-            var files = Directory.EnumerateFiles($"{BASE_PATH}\\TestXMLFiles\\", "*.xml")
-                .Where(f => !f.Contains("empty.xml") && !f.Contains("invalidXML.xml")) // skipping the invalid empty xml file from the test files
+            var files = Directory.EnumerateFiles($"{BASE_PATH}\\TestValidXMLFiles\\", "*.xml")
+                //.Where(f => !f.Contains("empty.xml") && !f.Contains("invalidXML.xml")) // skipping the invalid empty xml file from the test files
                 .ToArray();
             var tasks = files
                 .AsParallel()
@@ -69,7 +69,7 @@ namespace XMLParserAPITests
                 {
                     var mockFile = new Mock<IFormFile>();
                     mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes(f)));
-                    var fileName = ExtractFileNameFromLocation(f, $"{BASE_PATH}\\TestXMLFiles\\", ".xml");
+                    var fileName = ExtractFileNameFromLocation(f, $"{BASE_PATH}\\TestValidXMLFiles\\", ".xml");
                     return _sut.UploadAsync(new UploadRequestModel { File = mockFile.Object, FileName = fileName });
                 })
                 .ToList();
@@ -104,7 +104,7 @@ namespace XMLParserAPITests
             IConfiguration configuration = new ConfigurationBuilder()
                 .Build();
 
-            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestXMLFiles\\textFile.txt")));
+            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestInvalidXMLFiles\\textFile.txt")));
             _sut = new DocumentController(configuration);
 
             // Act
@@ -124,7 +124,7 @@ namespace XMLParserAPITests
             IConfiguration configuration = new ConfigurationBuilder()
                 .Build();
 
-            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestXMLFiles\\jsonFile.json")));
+            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestInvalidXMLFiles\\jsonFile.json")));
             _sut = new DocumentController(configuration);
 
             // Act
@@ -144,7 +144,7 @@ namespace XMLParserAPITests
             IConfiguration configuration = new ConfigurationBuilder()
                 .Build();
 
-            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestXMLFiles\\invalidXML.xml")));
+            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestInvalidXMLFiles\\invalidXML.xml")));
             _sut = new DocumentController(configuration);
 
             // Act
@@ -164,7 +164,7 @@ namespace XMLParserAPITests
             IConfiguration configuration = new ConfigurationBuilder()
                 .Build();
 
-            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestXMLFiles\\empty.xml")));
+            _mockFile.Setup(m => m.OpenReadStream()).Returns(new MemoryStream(File.ReadAllBytes($"{BASE_PATH}\\TestInvalidXMLFiles\\empty.xml")));
             _sut = new DocumentController(configuration);
 
             // Act

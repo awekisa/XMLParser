@@ -23,31 +23,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestXMLFiles\jsonFile.json">
+    <None Update="TestInvalidXMLFiles\jsonFile.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestXMLFiles\empty.xml">
+    <None Update="TestInvalidXMLFiles\empty.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestXMLFiles\textFile.txt">
+    <None Update="TestInvalidXMLFiles\textFile.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestXMLFiles\largestXml.xml">
+    <None Update="TestValidXMLFiles\largestXml.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestXMLFiles\midleSizedXml.xml">
+    <None Update="TestValidXMLFiles\midleSizedXml.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestXMLFiles\smalXml.xml">
+    <None Update="TestValidXMLFiles\smalXml.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestXMLFiles\invalidXML.xml">
+    <None Update="TestInvalidXMLFiles\invalidXML.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestXMLFiles\sample - Copy.xml">
+    <None Update="TestValidXMLFiles\sample - Copy.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="TestXMLFiles\sample.xml">
+    <None Update="TestValidXMLFiles\sample.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

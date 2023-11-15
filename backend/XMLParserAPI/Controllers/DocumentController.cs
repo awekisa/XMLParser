@@ -10,6 +10,7 @@ namespace XMLParserAPI.Controllers
     public class DocumentController : Controller
     {
         private readonly IConfiguration _configuration;
+        private string BASE_PATH = Directory.GetCurrentDirectory();
 
         public DocumentController(IConfiguration configuration)
         {
@@ -55,7 +56,7 @@ namespace XMLParserAPI.Controllers
 
         private async Task<string> SaveJsonFile(string json, string fileName)
         {
-            var targetFolder = _configuration.GetSection("SavedJsonFilesFolder").Get<string>();
+            var targetFolder = Path.Combine(BASE_PATH, "OutputFiles");
 
             if (!Directory.Exists(targetFolder))
             {
