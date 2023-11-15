@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
 import {
 	Container,
@@ -15,10 +15,6 @@ import Form from './Components/Form';
 function App() {
 	const [responseMessage, setResponseMessage] = useState({});
 	const [error, setError] = useState('');
-
-	// useEffect(() => {
-	// 	console.log(responseMessage);
-	// }, [responseMessage, error]);
 
 	return (
 		<ChakraProvider>
