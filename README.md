@@ -31,6 +31,7 @@ npm start
 The application will convert the XML file to JSON and display the location of the new JSON file.
 
 Technical Specifications
+
 The backend is implemented using ASP.NET Web API and runs on .NET 6.
 
 The frontend is implemented using React 18.2.0.
@@ -38,5 +39,7 @@ The frontend is implemented using React 18.2.0.
 The application uses the following libraries:
 
 ASP.NET Web API
+
 React
+
 Chakra
